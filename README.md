@@ -1,4 +1,4 @@
-# Search Tool
+# Search
 
 A simple, recursive file search tool written in Rust.
 
