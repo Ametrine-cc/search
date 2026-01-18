@@ -1,6 +1,7 @@
 # Search
 
 A simple, recursive file search tool written in Rust.
+Currently, it only supports searching for files within the current directory. And is only for linux and other unix-like / unix-based systems.
 
 ## Features
 
