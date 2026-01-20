@@ -21,11 +21,15 @@ fn log(message: &str, type_log: &str) {
     }
 }
 
-fn search(file_name_to_find: &str, current_scan_dir: &PathBuf) -> bool {
+// The search function now returns a Vec<PathBuf> of found files, and the caller can handle printing.
+// This simplifies the search function's responsibility and avoids modifying a global static in a complex way.
+fn search(file_name_to_find: &str, current_scan_dir: &PathBuf) -> Vec<PathBuf> {
     log(
         &format!("Scanning directory: {}", current_scan_dir.display()),
         "Search",
     );
+
+    let mut found_in_this_dir = Vec::new();
 
     let paths = match fs::read_dir(current_scan_dir) {
         Ok(p) => p,
@@ -38,7 +42,7 @@ fn search(file_name_to_find: &str, current_scan_dir: &PathBuf) -> bool {
                 ),
                 "Error",
             );
-            return false;
+            return found_in_this_dir; // Return empty vec on error
         }
     };
 
@@ -61,8 +65,7 @@ fn search(file_name_to_find: &str, current_scan_dir: &PathBuf) -> bool {
             if let Some(name) = entry_path.file_name() {
                 if name == <str as AsRef<OsStr>>::as_ref(file_name_to_find) {
                     log(&format!("Found file: {}", entry_path.display()), "Search");
-                    println!("File found at: {}", entry_path.display());
-                    return true;
+                    found_in_this_dir.push(entry_path.clone());
                 }
             }
         } else if entry_path.is_dir() {
@@ -70,13 +73,12 @@ fn search(file_name_to_find: &str, current_scan_dir: &PathBuf) -> bool {
                 &format!("Entering directory: {}", entry_path.display()),
                 "Search",
             );
-            if search(file_name_to_find, &entry_path) {
-                return true;
-            }
+            let mut sub_found = search(file_name_to_find, &entry_path);
+            found_in_this_dir.append(&mut sub_found);
         }
     }
 
-    false
+    found_in_this_dir
 }
 
 fn main() {
@@ -100,17 +102,22 @@ fn main() {
         panic!("Failed to get current directory: {}", e);
     });
 
+    let mut all_found_files: Vec<PathBuf> = Vec::new();
+
     for val in search_terms {
         if !val.contains('-') {
             log(&format!("Attempting to find: '{}'", val), "Search Init");
-            if search(&val, &initial_search_dir) {
-                log(&format!("Search for '{}' completed: Found", val), "Result");
-            } else {
-                log(
-                    &format!("Search for '{}' completed: Not Found", val),
-                    "Result",
-                );
-            }
+            let mut found_files = search(&val, &initial_search_dir);
+            all_found_files.append(&mut found_files);
+        }
+    }
+
+    println!("Found files:");
+    if all_found_files.is_empty() {
+        println!("No files found.");
+    } else {
+        for file in &all_found_files {
+            println!("{}", file.display());
         }
     }
 }
