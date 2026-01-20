@@ -1,4 +1,3 @@
-use std::ffi::OsStr;
 use std::fs;
 use std::path::PathBuf;
 use std::sync::Mutex;
@@ -21,8 +20,6 @@ fn log(message: &str, type_log: &str) {
     }
 }
 
-// The search function now returns a Vec<PathBuf> of found files, and the caller can handle printing.
-// This simplifies the search function's responsibility and avoids modifying a global static in a complex way.
 fn search(file_name_to_find: &str, current_scan_dir: &PathBuf) -> Vec<PathBuf> {
     log(
         &format!("Scanning directory: {}", current_scan_dir.display()),
@@ -63,7 +60,7 @@ fn search(file_name_to_find: &str, current_scan_dir: &PathBuf) -> Vec<PathBuf> {
 
         if entry_path.is_file() {
             if let Some(name) = entry_path.file_name() {
-                if name == <str as AsRef<OsStr>>::as_ref(file_name_to_find) {
+                if name == file_name_to_find {
                     log(&format!("Found file: {}", entry_path.display()), "Search");
                     found_in_this_dir.push(entry_path.clone());
                 }
