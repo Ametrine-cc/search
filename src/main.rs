@@ -60,7 +60,7 @@ fn search(file_name_to_find: &str, current_scan_dir: &PathBuf) -> Vec<PathBuf> {
 
         if entry_path.is_file() {
             if let Some(name) = entry_path.file_name() {
-                if name == file_name_to_find {
+                if name.to_string_lossy().contains(file_name_to_find) {
                     log(&format!("Found file: {}", entry_path.display()), "Search");
                     found_in_this_dir.push(entry_path.clone());
                 }
