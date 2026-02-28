@@ -1,6 +1,6 @@
 #include "include/utilities.h"
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdio>
 
 // Color function
 const char *color_me(const char *color) {
@@ -25,6 +25,8 @@ const char *color_me(const char *color) {
 
 // Logging function
 void logs(const char *function, const char *message) {
-    printf("%s%s | %s%s\n", color_me("blue"), function, color_me("green"), message);
-    printf("%s", color_me("reset"));
+    if (Utilities::should_log == true) {
+        printf("%s%s | %s%s\n", color_me("blue"), function, color_me("green"), message);
+        printf("%s", color_me("reset"));
+    }
 }

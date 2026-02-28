@@ -2,8 +2,12 @@
 #include <iostream>
 #include <filesystem>
 #include <string>
+#include <cstring>
 
 namespace fs = std::filesystem;
+
+// Set if logs should return an output or not
+bool Utilities::should_log = false;
 
 // Scan folder function
 void scanFolder(const std::string& path, const std::string& fileName) {
@@ -37,10 +41,19 @@ void scanFolder(const std::string& path, const std::string& fileName) {
 
 // Main function
 int main(int argc, char * argv[]) {
+
     //Check argument amount
     if (argc < 2) {
         std::cerr << "Usage: " << argv[0] << " <file name>" << std::endl;
         return 1;
+    }
+
+    // Check for debug flag
+    for (int i = 1; i < argc; i++) {
+        // if debug flag is found enable logging
+        if (strcmp(argv[i], "--debug") == 0) {
+            Utilities::should_log = true;
+        }
     }
 
     scanFolder("./", argv[1]); // Scans the current directory

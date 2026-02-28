@@ -12,38 +12,33 @@ Currently, it only supports searching for files within the current directory. An
 ## Usage
 
 ```bash
-search <file_name> [--debug]
+search <file_or_directory_name> [--debug]
 ```
 
 ### Arguments
 
-*   `<file_name>`: The name of the file to search for.
+*   `<file_or_directory_name>`: The name of the file or directory to search for.
 *   `--debug`: Enables debug logging, showing detailed scan progress and potential errors.
 
 ## Example
 
-To search for `myfile.txt` in the current directory and its subdirectories, with debug logging enabled:
+To search for `git` in the current directory and its subdirectories, with debug logging enabled:
 
 ```bash
-search myfile.txt --debug
+search git --debug
 ```
 
 This will output:
 
 ```bash
 Debug : Debug mode enabled
-Search Init : Attempting to find: 'myfile.txt'
-Search : Scanning directory: /home/user/projects/search
-Search : Checking: /home/user/projects/search/src
-Search : Entering directory: /home/user/projects/search/src
-Search : Scanning directory: /home/user/projects/search/src
-Search : Checking: /home/user/projects/search/src/main.cc
-Search : Entering directory: /home/user/projects/search/src/some_subdir
-... (continues until file is found or all directories are scanned)
-Search : Found file: /home/user/projects/search/src/some_subdir/myfile.txt
-File found at: /home/user/projects/search/src/some_subdir/myfile.txt
-Result : Search for 'myfile.txt' completed: Found
-Search Init : Attempting to find: 'another.log'
+finding_folder | .git [DIR]
+finding_file | README.md
+finding_folder | .old [DIR]
+finding_folder | src [DIR]
+finding_file | CMakeLists.txt
+finding_file | .gitignore
+finding_folder | build [DIR]
 ...
 ```
 

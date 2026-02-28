@@ -14,6 +14,10 @@ struct Colors {
     inline static const char *RESET = "\033[0m";
 };
 
+struct Utilities {
+    static bool should_log;
+};
+
 // Logging function
 void logs(const char *function, const char *message);
 
