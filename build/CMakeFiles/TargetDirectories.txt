@@ -1,3 +1,0 @@
-/home/Yurien/Projects/search/build/CMakeFiles/search.dir
-/home/Yurien/Projects/search/build/CMakeFiles/edit_cache.dir
-/home/Yurien/Projects/search/build/CMakeFiles/rebuild_cache.dir

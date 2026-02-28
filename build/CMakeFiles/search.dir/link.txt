@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/search.dir/link.d CMakeFiles/search.dir/src/main.cc.o -o search
