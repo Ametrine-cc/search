@@ -27,3 +27,7 @@ add_executable(search
     src/logs.cc
     src/include/utilities.h
 )
+
+# This tells CMake: take the 'search' target and put it in 'bin'
+# (which defaults to /usr/local/bin on Linux/Unix)
+install(TARGETS search DESTINATION bin)

@@ -38,6 +38,31 @@ search | Found : ./build/CMakeFiles/search.dir/src/main.cc.o
 ...
 ```
 
+## Installation
+
+To install from source follow these steps:
+
+1. Clone the repository: 
+```bash
+git clone https://github.com/Ametrine-cc/search.git
+cd search
+``` 
+2. Build the project: 
+```bash
+cmake -B build && cmake --build build
+``` 
+3. Install the binary: 
+```bash
+sudo make --install build
+``` 
+
+## Uninstallation
+
+To uninstall the binary, run:
+```bash
+sudo rm -rf /usr/local/bin/search
+``` 
+
 ## Development
 
 This project was built using C++.
