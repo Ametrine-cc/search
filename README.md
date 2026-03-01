@@ -1,7 +1,7 @@
 # Search
 
-A simple, recursive file search tool written in Rust.
-Currently, it only supports searching for files within the current directory. And is only for linux and other unix-like / unix-based systems.
+A simple, recursive file search tool written in C++.
+Currently, it only supports searching for linux and other unix-like / unix-based systems as Windows has not been tested or accounted for as a supported platform.
 
 ## Features
 
@@ -12,46 +12,61 @@ Currently, it only supports searching for files within the current directory. An
 ## Usage
 
 ```bash
-search <file_to_find_1> <file_to_find_2> ... [--debug]
+search <file_or_directory_name> [--debug|--full]
 ```
 
 ### Arguments
 
-*   `<file_to_find_X>`: The name of the file to search for. You can specify multiple file names.
-*   `--debug`: Enables debug logging, showing detailed scan progress and potential errors.
+*   `<file_or_directory_name>`: The name of the file or directory to search for.
+*   `--debug`: Enables debug logging, showing detailed scan progress and potential errors. Currently just adds pretty colors.
+*   `--full`: Searches all directories, not just the current one, enters subdirectories it finds along the way.
+
+#### Extra information: If specifying a file must add file extension for specific file types, not adding any extension will search for all files and directories with that name.
 
 ## Example
 
-To search for `myfile.txt` and `another.log` in the current directory and its subdirectories, with debug logging enabled:
+To search for `.cc` files in the current directory and its subdirectories (.cc being a c++ file extention), with debug logging enabled:
 
 ```bash
-search myfile.txt another.log --debug
-```
-
-This will output:
-
-```
-Debug : Debug mode enabled
-Search Init : Attempting to find: 'myfile.txt'
-Search : Scanning directory: /home/user/projects/search
-Search : Checking: /home/user/projects/search/src
-Search : Entering directory: /home/user/projects/search/src
-Search : Scanning directory: /home/user/projects/search/src
-Search : Checking: /home/user/projects/search/src/main.rs
-Search : Checking: /home/user/projects/search/src/lib.rs
-Search : Entering directory: /home/user/projects/search/src/some_subdir
-... (continues until file is found or all directories are scanned)
-Search : Found file: /home/user/projects/search/src/some_subdir/myfile.txt
-File found at: /home/user/projects/search/src/some_subdir/myfile.txt
-Result : Search for 'myfile.txt' completed: Found
-Search Init : Attempting to find: 'another.log'
+> search .cc --full --debug
+search | Found : ./src/main.cc
+search | Found : ./src/logs.cc
+search | Found : ./build/CMakeFiles/search.dir/src/main.cc.o.d
+search | Found : ./build/CMakeFiles/search.dir/src/logs.cc.o.d
+search | Found : ./build/CMakeFiles/search.dir/src/logs.cc.o
+search | Found : ./build/CMakeFiles/search.dir/src/main.cc.o
 ...
 ```
 
+## Installation
+
+To install from source follow these steps:
+
+1. Clone the repository: 
+```bash
+git clone https://github.com/Ametrine-cc/search.git
+cd search
+``` 
+2. Build the project: 
+```bash
+cmake -B build && cmake --build build
+``` 
+3. Install the binary: 
+```bash
+sudo make --install build
+``` 
+
+## Uninstallation
+
+To uninstall the binary, run:
+```bash
+sudo rm -rf /usr/local/bin/search
+``` 
+
 ## Development
 
-This project was built using Rust and relies on the `termcolor` crate for colored output.
+This project was built using C++.
 
 ## License
 
-This project is licensed under the GPL-3.0 license. See [LICENSE](https://www.gnu.org/licenses/gpl-3.0.txt) for more details.
+This project is licensed under the GPLv3 license. See [LICENSE](LICENSE.md) [License source](https://www.gnu.org/licenses/gpl-3.0.en.html#license-text) for more details.
