@@ -38,7 +38,12 @@ search | Found : ./build/CMakeFiles/search.dir/src/main.cc.o
 ...
 ```
 
-## Installation
+## Installation Uninstallation & Requirements
+
+#### To install search you need the following:
+*   `cmake` - A cross-platform build system.
+*   `gcc` or `clang` - A C++ compiler.
+*   `sudo` - A command-line utility for executing commands with administrative privileges.
 
 To install from source follow these steps:
 
