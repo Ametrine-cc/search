@@ -1,4 +1,21 @@
+// Search | Search for files and directories easier
+// Copyright (C) 2026  Ametrine Foundation
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 #include "include/utilities.h"
+#include <cstdio>
 #include <iostream>
 #include <filesystem>
 #include <string>
@@ -10,6 +27,16 @@ namespace fs = std::filesystem;
 bool Utilities::should_log = false;
 bool Utilities::full_scan = false;
 std::string Utilities::root_dir = "./";
+
+// Print licence function
+void print_license() {
+    printf("Search | Search for files and directories easier\n");
+    printf("Copyright (C) 2026 Ametrine Foundation\n");
+    printf("This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\n");
+    printf("This is free software, and you are welcome to redistribute it\n");
+    printf("under certain conditions; type `show c' for details.\n");
+    printf("\n");
+}
 
 // Scan folder function
 void scanFolder(const std::string& path, const std::string& fileName, bool file_or_directory) {
@@ -45,7 +72,7 @@ void scanFolder(const std::string& path, const std::string& fileName, bool file_
                 if (strstr(buffer, fileName.c_str()) != nullptr) {
 
                     if (!Utilities::should_log) {
-                        printf("Search : %s\n", buffer);
+                        printf("%s\n", buffer);
                     } else {
                         logs("search", buffer);
                     }
@@ -68,6 +95,8 @@ int main(int argc, char * argv[]) {
 
     //Check argument amount
     if (argc < 2) {
+        print_license();
+
         std::cerr << "Usage: " << argv[0] << " <file name>" << std::endl;
         return 1;
     }
@@ -78,6 +107,7 @@ int main(int argc, char * argv[]) {
         // if debug flag is found enable logging
         if (strcmp(argv[i], "--debug") == 0) {
             Utilities::should_log = true;
+            print_license();
         }
 
         if (strcmp(argv[i], "--full") == 0) {

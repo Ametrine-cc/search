@@ -1,7 +1,7 @@
 # Search
 
-A simple, recursive file search tool written in Rust.
-Currently, it only supports searching for files within the current directory. And is only for linux and other unix-like / unix-based systems.
+A simple, recursive file search tool written in C++.
+Currently, it only supports searching for linux and other unix-like / unix-based systems as Windows has not been tested or accounted for as a supported platform.
 
 ## Features
 
@@ -44,4 +44,4 @@ This project was built using C++.
 
 ## License
 
-This project is licensed under the GPL-3.0 license. See [LICENSE](https://www.gnu.org/licenses/gpl-3.0.txt) for more details.
+This project is licensed under the GPLv3 license. See [LICENSE](LICENSE.md) [License source](https://www.gnu.org/licenses/gpl-3.0.en.html#license-text) for more details.
