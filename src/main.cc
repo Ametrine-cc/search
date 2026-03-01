@@ -8,25 +8,49 @@ namespace fs = std::filesystem;
 
 // Set if logs should return an output or not
 bool Utilities::should_log = false;
+bool Utilities::full_scan = false;
+std::string Utilities::root_dir = "./";
 
 // Scan folder function
-void scanFolder(const std::string& path, const std::string& fileName) {
+void scanFolder(const std::string& path, const std::string& fileName, bool file_or_directory) {
     // Check if the path exists and is a directory
     try {
         if (fs::exists(path) && fs::is_directory(path)) {
             // Iterate through the directory entries
             for (const auto& entry : fs::directory_iterator(path)) {
                 // Print file name and type
-                if (entry.is_directory()) {
-                    // If its a directory [DIR] is added to the end of the output
-                    char buffer[256];
-                    snprintf(buffer, sizeof(buffer), "%s [DIR]", entry.path().filename().string().c_str());
-                    logs("finding_folder", buffer);
+                char buffer[256];
+
+                if (!Utilities::full_scan) {
+                    if (entry.is_directory()) {
+                        // If its a directory [DIR] is added to the end of the output
+                        snprintf(buffer, sizeof(buffer), "Found : %s [DIR]", entry.path().string().c_str());
+                    } else {
+                        // If its a file nothing is added and output stays the same
+                        snprintf(buffer, sizeof(buffer), "Found : %s", entry.path().string().c_str());
+                    }
                 } else {
-                    // If its a file nothing is added and output stays the same
-                    char buffer[256];
-                    snprintf(buffer, sizeof(buffer), "%s", entry.path().filename().string().c_str());
-                    logs("finding_file", buffer);
+                    if (entry.is_directory()) {
+                        // If its a directory [DIR] is added to the end of the output
+                        snprintf(buffer, sizeof(buffer), "Found : %s [DIR]", entry.path().string().c_str());
+                        Utilities::root_dir = entry.path().string();
+
+                        scanFolder(Utilities::root_dir, fileName, file_or_directory);
+                    } else {
+                        // If its a file nothing is added and output stays the same
+                        snprintf(buffer, sizeof(buffer), "Found : %s", entry.path().string().c_str());
+                    }
+                }
+
+                if (strstr(buffer, fileName.c_str()) != nullptr) {
+
+                    if (!Utilities::should_log) {
+                        printf("Search : %s\n", buffer);
+                    } else {
+                        logs("search", buffer);
+                    }
+                } else {
+                    continue;
                 }
             }
         } else {
@@ -48,15 +72,28 @@ int main(int argc, char * argv[]) {
         return 1;
     }
 
-    // Check for debug flag
+
+    // Check for debug flag and determine file_or_directory type
     for (int i = 1; i < argc; i++) {
         // if debug flag is found enable logging
         if (strcmp(argv[i], "--debug") == 0) {
             Utilities::should_log = true;
         }
+
+        if (strcmp(argv[i], "--full") == 0) {
+            Utilities::full_scan = true;
+        }
     }
 
-    scanFolder("./", argv[1]); // Scans the current directory
+    bool is_target_a_file = true;
+
+    // Check if argv[1] contains a '.'
+    std::string target_name_arg = argv[1];
+    if (target_name_arg.find('.') == std::string::npos) {
+        is_target_a_file = false;
+    }
+
+    scanFolder(Utilities::root_dir, argv[1], is_target_a_file); // Scans the current directory
 
     // Return 0 to indicate successful execution
     return 0;

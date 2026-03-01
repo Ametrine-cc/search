@@ -1,6 +1,8 @@
 #ifndef UTILITIES_H
 #define UTILITIES_H
 
+#include <string>
+
 // Colors for logging
 struct Colors {
     public:
@@ -16,7 +18,11 @@ struct Colors {
 
 struct Utilities {
     static bool should_log;
+    static bool full_scan;
+    static std::string root_dir;
 };
+
+#define MAX_BUFFER_SIZE 1000
 
 // Logging function
 void logs(const char *function, const char *message);

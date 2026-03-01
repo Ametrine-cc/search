@@ -12,39 +12,35 @@ Currently, it only supports searching for files within the current directory. An
 ## Usage
 
 ```bash
-search <file_or_directory_name> [--debug]
+search <file_or_directory_name> [--debug|--full]
 ```
 
 ### Arguments
 
 *   `<file_or_directory_name>`: The name of the file or directory to search for.
-*   `--debug`: Enables debug logging, showing detailed scan progress and potential errors.
+*   `--debug`: Enables debug logging, showing detailed scan progress and potential errors. Currently just adds pretty colors.
+*   `--full`: Searches all directories, not just the current one, enters subdirectories it finds along the way.
+
+#### Extra information: If specifying a file must add file extension for specific file types, not adding any extension will search for all files and directories with that name.
 
 ## Example
 
-To search for `git` in the current directory and its subdirectories, with debug logging enabled:
+To search for `.cc` files in the current directory and its subdirectories (.cc being a c++ file extention), with debug logging enabled:
 
 ```bash
-search git --debug
-```
-
-This will output:
-
-```bash
-Debug : Debug mode enabled
-finding_folder | .git [DIR]
-finding_file | README.md
-finding_folder | .old [DIR]
-finding_folder | src [DIR]
-finding_file | CMakeLists.txt
-finding_file | .gitignore
-finding_folder | build [DIR]
+> search .cc --full --debug
+search | Found : ./src/main.cc
+search | Found : ./src/logs.cc
+search | Found : ./build/CMakeFiles/search.dir/src/main.cc.o.d
+search | Found : ./build/CMakeFiles/search.dir/src/logs.cc.o.d
+search | Found : ./build/CMakeFiles/search.dir/src/logs.cc.o
+search | Found : ./build/CMakeFiles/search.dir/src/main.cc.o
 ...
 ```
 
 ## Development
 
-This project was built using CPP.
+This project was built using C++.
 
 ## License
 
