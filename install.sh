@@ -5,5 +5,4 @@ cmake --install build
 
 # Clean up build directory
 rm -rf build
-
 rm -rf ./search
