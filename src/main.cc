@@ -166,9 +166,7 @@ int main(int argc, char * argv[]) {
         return 1;
     }
 
-    if (!Utilities::use_config) {
-        logs("main", "use_config is false, skipping config usage");
-    } else {
+    if (Utilities::use_config) {
         logs("main", "use_config is true, using config");
 
         if (Utilities::explore_all) {
@@ -176,6 +174,8 @@ int main(int argc, char * argv[]) {
         } else {
             logs("main", "no default flags found, scanning root directory");
         }
+    } else {
+        logs("main", "use_config is false, skipping config usage");
     }
 
     // Check for full scan flag
