@@ -26,15 +26,18 @@ namespace fs = std::filesystem;
 // Set if logs should return an output or not
 bool Utilities::should_log = false;
 bool Utilities::full_scan = false;
+bool Utilities::use_config = false;
+bool Utilities::explore_all = false;
+
 std::string Utilities::root_dir = "./";
 
 // Print licence function
 void print_license() {
     printf("Search | Search for files and directories easier\n");
     printf("Copyright (C) 2026 Ametrine Foundation\n");
-    printf("This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\n");
+    printf("This program comes with ABSOLUTELY NO WARRANTY; for details type `--show w'.\n");
     printf("This is free software, and you are welcome to redistribute it\n");
-    printf("under certain conditions; type `show c' for details.\n");
+    printf("under certain conditions; type `--show c' for details.\n");
     printf("\n");
 }
 
@@ -48,29 +51,34 @@ void scanFolder(const std::string& path, const std::string& fileName, bool file_
                 // Print file name and type
                 char buffer[256];
 
-                if (!Utilities::full_scan) {
+                // Determine if a full (recursive) scan is enabled using Utilities::explore_all
+                if (!Utilities::explore_all) { // If not a full scan (i.e., shallow scan)
                     if (entry.is_directory()) {
-                        // If its a directory [DIR] is added to the end of the output
+                        // If it's a directory [DIR] is added to the end of the output
                         snprintf(buffer, sizeof(buffer), "Found : %s [DIR]", entry.path().string().c_str());
                     } else {
-                        // If its a file nothing is added and output stays the same
+                        // If it's a file nothing is added and output stays the same
                         snprintf(buffer, sizeof(buffer), "Found : %s", entry.path().string().c_str());
                     }
-                } else {
+                } else { // If it is a full (recursive) scan
                     if (entry.is_directory()) {
-                        // If its a directory [DIR] is added to the end of the output
+                        // If it's a directory [DIR] is added to the end of the output
                         snprintf(buffer, sizeof(buffer), "Found : %s [DIR]", entry.path().string().c_str());
-                        Utilities::root_dir = entry.path().string();
-
-                        scanFolder(Utilities::root_dir, fileName, file_or_directory);
+                        // For recursive calls, pass the current entry's path directly.
+                        // Modifying the global Utilities::root_dir here would cause incorrect behavior in recursion.
+                        scanFolder(entry.path().string(), fileName, file_or_directory);
                     } else {
-                        // If its a file nothing is added and output stays the same
+                        // If it's a file nothing is added and output stays the same
                         snprintf(buffer, sizeof(buffer), "Found : %s", entry.path().string().c_str());
                     }
                 }
 
-                if (strstr(buffer, fileName.c_str()) != nullptr) {
+                if (!Utilities::explore_all && !file_or_directory && !entry.is_directory()) {
+                    continue;
+                }
 
+                // Check if the file/directory name contains the search term
+                if (strstr(buffer, fileName.c_str()) != nullptr) {
                     if (!Utilities::should_log) {
                         printf("%s\n", buffer);
                     } else {
@@ -92,44 +100,80 @@ void scanFolder(const std::string& path, const std::string& fileName, bool file_
 
 // Main function
 int main(int argc, char * argv[]) {
+
+    // Check for debug flag and determine file_or_directory type
+    for (int i = 1; i < argc; i++) {
+        // if debug flag is found enable logging
+        if (strcmp(argv[i], "--debug") == 0) {
+            Utilities::should_log = true;
+            print_license();
+        }
+    }
+
+    // Read config file
     if (readConfigFile() != 0) {
         printf("You can use the following command to generate a new config file:\n");
         printf("search --config generate\n");
         return 1;
     }
 
-    // //Check argument amount
-    // if (argc < 2) {
-    //     print_license();
+    if (!Utilities::use_config) {
+        logs("main", "use_config is false, skipping config usage");
+    } else {
+        logs("main", "use_config is true, using config");
 
-    //     std::cerr << "Usage: " << argv[0] << " <file name>" << std::endl;
-    //     return 1;
-    // }
+        if (Utilities::explore_all) {
+            logs("main", "explore_all is enabled");
+        } else {
+            logs("main", "no default flags found, scanning root directory");
+        }
+    }
 
+    // Check for full scan flag
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--full") == 0) {
+            if (Utilities::explore_all) {
+                logs("main", "--full flag ignored, explore_all is already true");
+                continue;
+            } else {
+                Utilities::explore_all = true;
+            }
+        }
+    }
 
-    // // Check for debug flag and determine file_or_directory type
-    // for (int i = 1; i < argc; i++) {
-    //     // if debug flag is found enable logging
-    //     if (strcmp(argv[i], "--debug") == 0) {
-    //         Utilities::should_log = true;
-    //         print_license();
-    //     }
+    // Check argument amount
+    if (argc < 2) {
+        print_license();
 
-    //     if (strcmp(argv[i], "--full") == 0) {
-    //         Utilities::full_scan = true;
-    //     }
-    // }
+        std::cerr << "Usage: " << argv[0] << " <file name>" << std::endl;
+        return 1;
+    }
 
-    // bool is_target_a_file = true;
+    bool is_target_a_file = true;
 
-    // // Check if argv[1] contains a '.'
-    // std::string target_name_arg = argv[1];
-    // if (target_name_arg.find('.') == std::string::npos) {
-    //     is_target_a_file = false;
-    // }
+    std::string target_name_arg;
 
-    // scanFolder(Utilities::root_dir, argv[1], is_target_a_file); // Scans the current directory
+    for (int i = 1; i < argc; ++i) {
+        // Check if argv[i] does NOT start with "--"
+        if (strncmp(argv[i], "--", 2) != 0) {
+            target_name_arg = argv[i];
+            break; // Found the first non-flag argument, so stop searching
+        }
+    }
 
-    // // Return 0 to indicate successful execution
-    // return 0;
+    // Check if target_name_arg contains a '.'
+    // If not, it's considered a search for a directory or a file without a specific extension.
+    if (target_name_arg.find('.') == std::string::npos) {
+        logs("main", "target name does not contain a '.', scanning for directories and files without specific extensions");
+        is_target_a_file = false;
+    }
+
+    char buffer[MAX_BUFFER_SIZE];
+    snprintf(buffer, MAX_BUFFER_SIZE, "root dir: %s\n", Utilities::root_dir.c_str());
+
+    logs("main", buffer);
+
+    scanFolder(Utilities::root_dir, target_name_arg, is_target_a_file); // Scans the current directory
+
+    return 0;
 }

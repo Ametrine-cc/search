@@ -1,5 +1,20 @@
+// Search | Search for files and directories easier
+// Copyright (C) 2026  Ametrine Foundation
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 #include "include/utilities.h"
-#include <iostream>
 #include <fstream>
 #include <string>
 
@@ -22,6 +37,8 @@ int readConfigFile() {
             if (line.find("local") == 0) {
                 std::string key = line.substr(6);
 
+                char buffer[MAX_BUFFER_SIZE];
+
                 if (key.find(USE_CONFIG) == 0) {
                     std::string value = key.substr(USE_CONFIG.size());
                     size_t pos_space = 0;
@@ -36,10 +53,13 @@ int readConfigFile() {
                         value.replace(pos_equals, 1, "");
                     }
 
-                    printf("%s | %s\n", USE_CONFIG.c_str(), value.c_str());
+                    snprintf(buffer, sizeof(buffer), "%s | %s", USE_CONFIG.c_str(), value.c_str());
+                    logs("ConfigManager", buffer);
 
-                } else if (key.find(SHOW_COLORS) == 0) {
-                    std::string value = key.substr(SHOW_COLORS.size());
+                    Utilities::use_config = true;
+
+                } else if (key.find(EXPLORE_ALL) == 0) {
+                    std::string value = key.substr(EXPLORE_ALL.size());
                     size_t pos_space = 0;
 
                     while ((pos_space = value.find(" ", pos_space)) != std::string::npos) {
@@ -52,13 +72,14 @@ int readConfigFile() {
                         value.replace(pos_equals, 1, "");
                     }
 
-                    printf("%s | %s\n", SHOW_COLORS.c_str(), value.c_str());
+                    snprintf(buffer, sizeof(buffer), "%s | %s\n", EXPLORE_ALL.c_str(), value.c_str());
+                    logs("ConfigManager", buffer);
+
+                    Utilities::explore_all = true;
+
                 }
             }
-
-            // printf("%s\n", line.c_str());
         }
-
     } catch (std::exception& e) {
         printf("Error reading config file: %s\n", filename.c_str());
         printf("Please check the file path and permissions or generate a new config file.\n");

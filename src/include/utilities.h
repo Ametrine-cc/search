@@ -43,6 +43,8 @@ const std::string EXPLORE_ALL = "explore_all";
 struct Utilities {
     static bool should_log;
     static bool full_scan;
+    static bool use_config;
+    static bool explore_all;
     static std::string root_dir;
 };
 
