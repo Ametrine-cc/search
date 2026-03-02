@@ -1,7 +1,7 @@
 # Search
 
 A simple, recursive file search tool written in C++.
-Currently, it only supports searching for linux and other unix-like / unix-based systems as Windows has not been tested or accounted for as a supported platform.
+Currently, it only supports searching for linux and other unix-like / unix-based systems, as Windows has not been tested or accounted for as a supported platform.
 
 ## Features
 
@@ -38,7 +38,7 @@ search | Found : ./build/CMakeFiles/search.dir/src/main.cc.o
 ...
 ```
 
-## Installation Uninstallation & Requirements
+## Installation & Requirements
 
 #### To install search you need the following:
 *   `cmake` - A cross-platform build system.
@@ -59,14 +59,53 @@ cmake -B build && cmake --build build
 3. Install the binary: 
 ```bash
 sudo make --install build
+
+# done!!!
+``` 
+
+To install with the install.sh script, run:
+
+1. Clone the repository: 
+```bash
+git clone https://github.com/Ametrine-cc/search.git
+cd search
+```
+
+2. Run the installation script
+
+```bash
+chmod +x install.sh
+./install.sh
+
+# done!!!
 ``` 
 
 ## Uninstallation
 
 To uninstall the binary, run:
+
 ```bash
-sudo rm -rf /usr/local/bin/search
+sudo rm -rf /usr/local/bin/search $HOME/.config/search
 ``` 
+
+# Configuration file
+
+The configuration file is located at `~/.config/search/config.lua`.
+To customize search, you can modify this file. Using the following format:
+
+```lua
+local use_config = true
+
+local explore_all = true
+```
+
+### use_config
+
+If `use_config` is `true`, search will use the configuration file. If `false`, search will use default settings.
+
+### explore_all
+
+If `explore_all` is `true`, search will explore all files in the current directory. If `false`, search will only explore files in the current directory that match the search query.
 
 ## Development
 

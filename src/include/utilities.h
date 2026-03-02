@@ -32,9 +32,44 @@ struct Colors {
     inline static const char *RESET = "\033[0m";
 };
 
+// Default configuration file path
+const std::string CONFIG_FILE_PATH = []() {
+    const char* user_env = std::getenv("USER");
+    std::string user_str;
+
+    if (user_env != nullptr) {
+        user_str = user_env;
+    } else {
+        user_str = "$USER";
+    }
+
+    return "/home/" + user_str + "/.config/search/config.lua";
+}();
+
+// Default licence file path
+const std::string LICENSE_FILE_PATH = []() {
+    const char* user_env = std::getenv("USER");
+    std::string user_str;
+
+    if (user_env != nullptr) {
+        user_str = user_env;
+    } else {
+        user_str = "$USER";
+    }
+
+    return "/home/" + user_str + "/.config/search/license.txt";
+}();
+
+// Configuration options
+const std::string USE_CONFIG = "use_config";
+const std::string SHOW_COLORS = "show_colors";
+const std::string EXPLORE_ALL = "explore_all";
+
 struct Utilities {
     static bool should_log;
     static bool full_scan;
+    static bool use_config;
+    static bool explore_all;
     static std::string root_dir;
 };
 
@@ -42,5 +77,8 @@ struct Utilities {
 
 // Logging function
 void logs(const char *function, const char *message);
+
+// Read configuration file
+int readConfigFile();
 
 #endif
