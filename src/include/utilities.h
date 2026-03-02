@@ -46,6 +46,20 @@ const std::string CONFIG_FILE_PATH = []() {
     return "/home/" + user_str + "/.config/search/config.lua";
 }();
 
+// Default licence file path
+const std::string LICENSE_FILE_PATH = []() {
+    const char* user_env = std::getenv("USER");
+    std::string user_str;
+
+    if (user_env != nullptr) {
+        user_str = user_env;
+    } else {
+        user_str = "$USER";
+    }
+
+    return "/home/" + user_str + "/.config/search/license.txt";
+}();
+
 // Configuration options
 const std::string USE_CONFIG = "use_config";
 const std::string SHOW_COLORS = "show_colors";

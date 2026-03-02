@@ -19,6 +19,7 @@
 #include <iostream>
 #include <filesystem>
 #include <string>
+#include <fstream>
 #include <cstring>
 
 namespace fs = std::filesystem;
@@ -31,14 +32,62 @@ bool Utilities::explore_all = false;
 
 std::string Utilities::root_dir = "./";
 
-// Print licence function
-void print_license() {
+// Print licence functions
+void print_license_short() {
     printf("Search | Search for files and directories easier\n");
     printf("Copyright (C) 2026 Ametrine Foundation\n");
     printf("This program comes with ABSOLUTELY NO WARRANTY; for details type `--show w'.\n");
     printf("This is free software, and you are welcome to redistribute it\n");
     printf("under certain conditions; type `--show c' for details.\n");
     printf("\n");
+}
+
+void print_license() {
+    std::ifstream file(LICENSE_FILE_PATH);
+    if (file.is_open()) {
+        std::string line;
+        while (std::getline(file, line)) {
+            std::cout << line << '\n';
+        }
+        // The ifstream 'file' is automatically closed when it goes out of scope (RAII).
+    } else {
+        // Output an error message to stderr if the file cannot be opened.
+        std::cerr << "Error: Could not open license file at " << LICENSE_FILE_PATH << std::endl;
+    }
+    // Retain the original trailing newline output.
+    std::cout << '\n';
+}
+
+void print_warranty() {
+    printf("15. Disclaimer of Warranty.\n\n");
+    printf("    THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY\n");
+    printf("    APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT\n");
+    printf("    HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM \"AS IS\" WITHOUT\n");
+    printf("    WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT\n");
+    printf("    NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND\n");
+    printf("    FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY\n");
+    printf("    AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM\n");
+    printf("    PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,\n");
+    printf("    REPAIR OR CORRECTION.\n\n");
+    printf("16. Limitation of Liability.\n\n");
+    printf("    IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN\n");
+    printf("    WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES\n");
+    printf("    AND/OR CONVEYS THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR\n");
+    printf("    DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL\n");
+    printf("    DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM\n");
+    printf("    (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED\n");
+    printf("    INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE\n");
+    printf("    OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF SUCH\n");
+    printf("    HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH\n");
+    printf("    DAMAGES.\n\n");
+    printf("17. Interpretation of Sections 15 and 16.\n\n");
+    printf("    If the disclaimer of warranty and limitation of liability provided\n");
+    printf("    above cannot be given local legal effect according to their terms,\n");
+    printf("    reviewing courts shall apply local law that most closely approximates\n");
+    printf("    an absolute waiver of all civil liability in connection with the\n");
+    printf("    Program, unless a warranty or assumption of liability accompanies a\n");
+    printf("    copy of the Program in return for a fee.\n");
+
 }
 
 // Scan folder function
@@ -106,7 +155,7 @@ int main(int argc, char * argv[]) {
         // if debug flag is found enable logging
         if (strcmp(argv[i], "--debug") == 0) {
             Utilities::should_log = true;
-            print_license();
+            print_license_short();
         }
     }
 
@@ -139,11 +188,24 @@ int main(int argc, char * argv[]) {
                 Utilities::explore_all = true;
             }
         }
+
+        if (strcmp(argv[i], "--show") == 0) {
+            if (strcmp(argv[i + 1], "c") == 0) {
+                print_license();
+            } else if (strcmp(argv[i + 1], "w") == 0) {
+                print_warranty();
+            } else {
+                std::cerr << "Error: --show flag requires a file name argument." << std::endl;
+                return 1;
+            }
+
+            return 0;
+        }
     }
 
     // Check argument amount
     if (argc < 2) {
-        print_license();
+        print_license_short();
 
         std::cerr << "Usage: " << argv[0] << " <file name>" << std::endl;
         return 1;
