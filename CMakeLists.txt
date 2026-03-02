@@ -26,6 +26,7 @@ add_executable(search
     src/main.cc
     src/logs.cc
     src/include/utilities.h
+    src/configManager.cc
 )
 
 # This tells CMake: take the 'search' target and put it in 'bin'

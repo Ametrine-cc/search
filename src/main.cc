@@ -92,39 +92,44 @@ void scanFolder(const std::string& path, const std::string& fileName, bool file_
 
 // Main function
 int main(int argc, char * argv[]) {
-
-    //Check argument amount
-    if (argc < 2) {
-        print_license();
-
-        std::cerr << "Usage: " << argv[0] << " <file name>" << std::endl;
+    if (readConfigFile() != 0) {
+        printf("You can use the following command to generate a new config file:\n");
+        printf("search --config generate\n");
         return 1;
     }
 
+    // //Check argument amount
+    // if (argc < 2) {
+    //     print_license();
 
-    // Check for debug flag and determine file_or_directory type
-    for (int i = 1; i < argc; i++) {
-        // if debug flag is found enable logging
-        if (strcmp(argv[i], "--debug") == 0) {
-            Utilities::should_log = true;
-            print_license();
-        }
+    //     std::cerr << "Usage: " << argv[0] << " <file name>" << std::endl;
+    //     return 1;
+    // }
 
-        if (strcmp(argv[i], "--full") == 0) {
-            Utilities::full_scan = true;
-        }
-    }
 
-    bool is_target_a_file = true;
+    // // Check for debug flag and determine file_or_directory type
+    // for (int i = 1; i < argc; i++) {
+    //     // if debug flag is found enable logging
+    //     if (strcmp(argv[i], "--debug") == 0) {
+    //         Utilities::should_log = true;
+    //         print_license();
+    //     }
 
-    // Check if argv[1] contains a '.'
-    std::string target_name_arg = argv[1];
-    if (target_name_arg.find('.') == std::string::npos) {
-        is_target_a_file = false;
-    }
+    //     if (strcmp(argv[i], "--full") == 0) {
+    //         Utilities::full_scan = true;
+    //     }
+    // }
 
-    scanFolder(Utilities::root_dir, argv[1], is_target_a_file); // Scans the current directory
+    // bool is_target_a_file = true;
 
-    // Return 0 to indicate successful execution
-    return 0;
+    // // Check if argv[1] contains a '.'
+    // std::string target_name_arg = argv[1];
+    // if (target_name_arg.find('.') == std::string::npos) {
+    //     is_target_a_file = false;
+    // }
+
+    // scanFolder(Utilities::root_dir, argv[1], is_target_a_file); // Scans the current directory
+
+    // // Return 0 to indicate successful execution
+    // return 0;
 }

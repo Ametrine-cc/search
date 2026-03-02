@@ -32,6 +32,14 @@ struct Colors {
     inline static const char *RESET = "\033[0m";
 };
 
+// Default configuration file path
+const std::string CONFIG_FILE_PATH = "/home/Yurien/Projects/search/src/config.lua";
+
+// Configuration options
+const std::string USE_CONFIG = "use_config";
+const std::string SHOW_COLORS = "show_colors";
+const std::string EXPLORE_ALL = "explore_all";
+
 struct Utilities {
     static bool should_log;
     static bool full_scan;
@@ -42,5 +50,8 @@ struct Utilities {
 
 // Logging function
 void logs(const char *function, const char *message);
+
+// Read configuration file
+int readConfigFile();
 
 #endif
