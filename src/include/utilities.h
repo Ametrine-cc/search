@@ -33,7 +33,18 @@ struct Colors {
 };
 
 // Default configuration file path
-const std::string CONFIG_FILE_PATH = "/home/Yurien/Projects/search/src/config.lua";
+const std::string CONFIG_FILE_PATH = []() {
+    const char* user_env = std::getenv("USER");
+    std::string user_str;
+
+    if (user_env != nullptr) {
+        user_str = user_env;
+    } else {
+        user_str = "$USER";
+    }
+
+    return "/home/" + user_str + "/.config/search/config.lua";
+}();
 
 // Configuration options
 const std::string USE_CONFIG = "use_config";
