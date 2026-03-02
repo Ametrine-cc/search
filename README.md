@@ -88,6 +88,25 @@ To uninstall the binary, run:
 sudo rm -rf /usr/local/bin/search $HOME/.config/search
 ``` 
 
+# Configuration file
+
+The configuration file is located at `~/.config/search/config.lua`.
+To customize search, you can modify this file. Using the following format:
+
+```lua
+local use_config = true
+
+local explore_all = true
+```
+
+### use_config
+
+If `use_config` is `true`, search will use the configuration file. If `false`, search will use default settings.
+
+### explore_all
+
+If `explore_all` is `true`, search will explore all files in the current directory. If `false`, search will only explore files in the current directory that match the search query.
+
 ## Development
 
 This project was built using C++.
