@@ -81,9 +81,10 @@ int readConfigFile() {
             }
         }
     } catch (std::exception& e) {
-        printf("Error reading config file: %s\n", filename.c_str());
-        printf("Please check the file path and permissions or generate a new config file.\n");
-        return -1;
+        char buffer[MAX_BUFFER_SIZE];
+
+        snprintf(buffer, sizeof(buffer), "Error reading config file: %s\n", filename.c_str());
+        logs("ConfigManager", buffer);
     }
 
     return 0;
