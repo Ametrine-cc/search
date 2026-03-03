@@ -4,4 +4,4 @@
 local use_config = true
 
 -- Specify whether to explore all files in the search results
-local explore_all = true
+local explore_all = false

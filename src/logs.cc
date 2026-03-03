@@ -41,7 +41,7 @@ const char *color_me(const char *color) {
 
 // Error logging function
 void elogs(const char *message) {
-    printf("%sERROR %s| %s%s", color_me("red"), color_me("reset"), color_me("magenta"), message);
+    printf("%sERROR %s| %s%s\n", color_me("red"), color_me("reset"), color_me("magenta"), message);
     printf("%s", color_me("reset"));
 }
 

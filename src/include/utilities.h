@@ -87,5 +87,6 @@ void elogs(const char *message);
 // Read configuration file
 int readConfigFile();
 int configManager();
+int configGenerate();
 
 #endif

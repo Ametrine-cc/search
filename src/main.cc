@@ -177,7 +177,20 @@ int main(int argc, char * argv[]) {
             } else if (strcmp(argv[i + 1], "w") == 0) {
                 print_warranty();
             } else {
-                std::cerr << "Error: --show flag requires a file name argument." << std::endl;
+                std::cerr << "Error: --show flag requires a name argument." << std::endl;
+                return 1;
+            }
+
+            return 0;
+        }
+
+        if (strcmp(argv[i], "--config") == 0) {
+            if (strcmp(argv[i + 1], "generate") == 0) {
+                if (configGenerate() != 0) {
+                    elogs("Error whilst generating config.lua");
+                }
+            } else {
+                std::cerr << "Error: --config flag requires a function argument." << std::endl;
                 return 1;
             }
 
