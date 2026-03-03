@@ -26,9 +26,10 @@ namespace fs = std::filesystem;
 
 // Set if logs should return an output or not
 bool Utilities::should_log = false;
-bool Utilities::full_scan = false;
-bool Utilities::use_config = false;
 bool Utilities::explore_all = false;
+
+// Set if should use the configuration file or not
+bool use_config_file = true;
 
 std::string Utilities::root_dir = "./";
 
@@ -43,7 +44,9 @@ void print_license_short() {
 }
 
 void print_license() {
+    char buffer[MAX_BUFFER_SIZE];
     std::ifstream file(LICENSE_FILE_PATH);
+
     if (file.is_open()) {
         std::string line;
         while (std::getline(file, line)) {
@@ -52,7 +55,10 @@ void print_license() {
         // The ifstream 'file' is automatically closed when it goes out of scope (RAII).
     } else {
         // Output an error message to stderr if the file cannot be opened.
-        std::cerr << "Error: Could not open license file at " << LICENSE_FILE_PATH << std::endl;
+        // std::cerr << "Error: Could not open license file at " << LICENSE_FILE_PATH << std::endl;
+
+        snprintf(buffer, MAX_BUFFER_SIZE, "Could not open license file at : %s", LICENSE_FILE_PATH.c_str());
+        elogs(buffer);
     }
     // Retain the original trailing newline output.
     std::cout << '\n';
@@ -92,6 +98,8 @@ void print_warranty() {
 
 // Scan folder function
 void scanFolder(const std::string& path, const std::string& fileName, bool file_or_directory) {
+    char buffer[MAX_BUFFER_SIZE];
+
     // Check if the path exists and is a directory
     try {
         if (fs::exists(path) && fs::is_directory(path)) {
@@ -139,11 +147,16 @@ void scanFolder(const std::string& path, const std::string& fileName, bool file_
             }
         } else {
             // Print error message if path does not exist or is not a directory
-            std::cerr << "Path does not exist or is not a directory." << std::endl;
+            // std::cerr << "Path does not exist or is not a directory." << std::endl;
+
+            elogs("Path does not exist or is not a directory");
         }
     } catch (const fs::filesystem_error& e) {
         // Print error message if filesystem error occurs
-        std::cerr << "Error: " << e.what() << std::endl;
+        // std::cerr << "Error: " << e.what() << std::endl;
+
+        snprintf(buffer, MAX_BUFFER_SIZE, "%s", e.what());
+        elogs(buffer);
     }
 }
 
@@ -157,25 +170,48 @@ int main(int argc, char * argv[]) {
             Utilities::should_log = true;
             print_license_short();
         }
+
+        if (strcmp(argv[i], "--show") == 0) {
+            if (strcmp(argv[i + 1], "c") == 0) {
+                print_license();
+            } else if (strcmp(argv[i + 1], "w") == 0) {
+                print_warranty();
+            } else {
+                std::cerr << "Error: --show flag requires a name argument." << std::endl;
+                return 1;
+            }
+
+            return 0;
+        }
+
+        if (strcmp(argv[i], "--config") == 0) {
+            if (strcmp(argv[i + 1], "generate") == 0) {
+                if (configGenerate() != 0) {
+                    elogs("Error whilst generating config.lua");
+                }
+            } else {
+                std::cerr << "Error: --config flag requires a function argument." << std::endl;
+                return 1;
+            }
+
+            return 0;
+        }
+    }
+
+
+    // Check config
+    if (configManager() != 0) {
+        logs("configManager", "no config use");
+        return 0;
     }
 
     // Read config file
     if (readConfigFile() != 0) {
         printf("You can use the following command to generate a new config file:\n");
         printf("search --config generate\n");
-        return 1;
-    }
 
-    if (Utilities::use_config) {
-        logs("main", "use_config is true, using config");
-
-        if (Utilities::explore_all) {
-            logs("main", "explore_all is enabled");
-        } else {
-            logs("main", "no default flags found, scanning root directory");
-        }
-    } else {
         logs("main", "use_config is false, skipping config usage");
+        use_config_file = false;
     }
 
     // Check for full scan flag
@@ -187,19 +223,6 @@ int main(int argc, char * argv[]) {
             } else {
                 Utilities::explore_all = true;
             }
-        }
-
-        if (strcmp(argv[i], "--show") == 0) {
-            if (strcmp(argv[i + 1], "c") == 0) {
-                print_license();
-            } else if (strcmp(argv[i + 1], "w") == 0) {
-                print_warranty();
-            } else {
-                std::cerr << "Error: --show flag requires a file name argument." << std::endl;
-                return 1;
-            }
-
-            return 0;
         }
     }
 

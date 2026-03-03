@@ -39,6 +39,12 @@ const char *color_me(const char *color) {
     return Colors::RESET;
 }
 
+// Error logging function
+void elogs(const char *message) {
+    printf("%sERROR %s| %s%s\n", color_me("red"), color_me("reset"), color_me("magenta"), message);
+    printf("%s", color_me("reset"));
+}
+
 // Logging function
 void logs(const char *function, const char *message) {
     if (Utilities::should_log == true) {
