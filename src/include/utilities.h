@@ -65,20 +65,27 @@ const std::string USE_CONFIG = "use_config";
 const std::string SHOW_COLORS = "show_colors";
 const std::string EXPLORE_ALL = "explore_all";
 
+// Set if should use the configuration file or not
+extern bool use_config_file;
+
+// Main utilities for search functionality
 struct Utilities {
     static bool should_log;
-    static bool full_scan;
-    static bool use_config;
     static bool explore_all;
+
     static std::string root_dir;
+
 };
 
 #define MAX_BUFFER_SIZE 1000
 
 // Logging function
 void logs(const char *function, const char *message);
+void elogs(const char *message);
+
 
 // Read configuration file
 int readConfigFile();
+int configManager();
 
 #endif

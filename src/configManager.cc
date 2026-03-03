@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "include/utilities.h"
+#include <cstdio>
+#include <cstring>
 #include <fstream>
 #include <string>
 
-int readConfigFile() {
+int configManager() {
 
     std::string filename = CONFIG_FILE_PATH;
 
@@ -54,11 +56,51 @@ int readConfigFile() {
                     }
 
                     snprintf(buffer, sizeof(buffer), "%s | %s", USE_CONFIG.c_str(), value.c_str());
-                    logs("ConfigManager", buffer);
+                    logs("configManager", buffer);
 
-                    Utilities::use_config = true;
+                    if (strcmp(value.c_str(), "false") == 0) {
+                        return 1;
+                    }
+                }
+            }
+        }
+    } catch (std::exception& e) {
+        char buffer[MAX_BUFFER_SIZE];
 
-                } else if (key.find(EXPLORE_ALL) == 0) {
+        snprintf(buffer, sizeof(buffer), "Error reading config file: %s\n", filename.c_str());
+        elogs(buffer);
+    }
+    return 0;
+}
+
+
+int readConfigFile() {
+
+    std::string filename = CONFIG_FILE_PATH;
+
+    try {
+        std::ifstream file(filename);
+        if (!file.is_open()) {
+            throw std::runtime_error("Failed to open config file");
+        }
+
+        std::string line;
+        while (std::getline(file, line)) {
+
+            if (!use_config_file) {
+                return -1;
+            }
+
+            if (line.find("--") == 0) {
+                continue;
+            }
+
+            if (line.find("local") == 0) {
+                std::string key = line.substr(6);
+
+                char buffer[MAX_BUFFER_SIZE];
+
+                if (key.find(EXPLORE_ALL) == 0) {
                     std::string value = key.substr(EXPLORE_ALL.size());
                     size_t pos_space = 0;
 
@@ -75,8 +117,13 @@ int readConfigFile() {
                     snprintf(buffer, sizeof(buffer), "%s | %s\n", EXPLORE_ALL.c_str(), value.c_str());
                     logs("ConfigManager", buffer);
 
-                    Utilities::explore_all = true;
+                    bool should;
 
+                    if (strcmp(value.c_str(), "false") == 0) {
+                        Utilities::explore_all = false;
+                    } else {
+                        Utilities::explore_all = true;
+                    }
                 }
             }
         }
@@ -84,9 +131,7 @@ int readConfigFile() {
         char buffer[MAX_BUFFER_SIZE];
 
         snprintf(buffer, sizeof(buffer), "Error reading config file: %s\n", filename.c_str());
-        logs("ConfigManager", buffer);
+        elogs(buffer);
     }
-
     return 0;
-
 }
