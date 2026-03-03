@@ -68,7 +68,6 @@ int configGenerate() {
     }
 }
 
-
 int configManager() {
 
     std::string filename = CONFIG_FILE_PATH;
