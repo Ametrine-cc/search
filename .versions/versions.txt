@@ -1,0 +1,2 @@
+In this folder, displayed is all the previous versions of search, labled by date of archival and version.
+Date is written in the american format: month, day, year.
