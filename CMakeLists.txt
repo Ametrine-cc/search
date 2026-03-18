@@ -12,7 +12,7 @@ set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_executable(search
     src/main.cc
     src/logs.cc
-    src/configManager.cc
+    src/include/utilities.hh
 )
 
 # --- Installation ---
