@@ -15,18 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "include/utilities.hh"
-#include <cstdio>
+#include <cstdlib>
 
-// Error logging function
-void elogs(const char *message) {
-    printf("%sERROR %s| %s%s\n", color_me("red"), color_me("reset"), color_me("magenta"), message);
-    printf("%s", color_me("reset"));
-}
-
-// Logging function
-void logs(const char *function, const char *message) {
-    if (Utilities::should_log == true) {
-        printf("%s%s | %s%s\n", color_me("blue"), function, color_me("green"), message);
-        printf("%s", color_me("reset"));
+void search(const std::string& query, char type) {
+    if (checkConfig() != 0) {
+        exit(0);
+    } else {
+        logs("search", "searching");
     }
 }

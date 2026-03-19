@@ -12,6 +12,9 @@ set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_executable(search
     src/main.cc
     src/logs.cc
+    src/search.cc
+    src/colorMe.cc
+    src/configManager.cc
     src/include/utilities.hh
 )
 
@@ -25,6 +28,3 @@ set(USER_CONFIG_DIR "$ENV{HOME}/.config/search")
 
 # Install the config file
 install(FILES src/config.lua DESTINATION ${USER_CONFIG_DIR})
-
-# Install the license file
-install(FILES src/license.txt DESTINATION ${USER_CONFIG_DIR})

@@ -16,15 +16,17 @@
 
 #include "include/utilities.hh"
 #include <cstring>
+#include <cstdio>
 
 bool Utilities::should_log = false;
 bool Utilities::explore_all = false;
-bool Utilities::file_search = false;
 bool Utilities::ignore_gitignore = false;
+bool Utilities::ignore_hidden = false;
 std::string Utilities::path = "";
 
 int main(int argc, char *argv[]) {
     char buffer[MAX_BUFFER_SIZE];
+    char search_type[1];
 
     logs(__FUNCTION__, "Search for files and directories easier");
 
@@ -43,18 +45,6 @@ int main(int argc, char *argv[]) {
                 logs(__FUNCTION__, "Full exploration enabled");
                 Utilities::explore_all = true;
             }
-
-            continue;
-        }
-
-        if (strcmp(argv[i], "--file") == 0) {
-            if (Utilities::file_search) {
-                logs(__FUNCTION__, "--file flag ignored, file_search is already true");
-            } else {
-                logs(__FUNCTION__, "File search enabled");
-                Utilities::file_search = true;
-            }
-
             continue;
         }
 
@@ -69,7 +59,6 @@ int main(int argc, char *argv[]) {
             logs(__FUNCTION__, "Ignoring .gitignore can cause some issues for maintainers of projects, search takes no responsibility for any issues that may arise from ignoring .gitignore");
             continue;
         }
-
     }
 
     if (argc < 2) {
@@ -85,13 +74,19 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    if (strcmp(path.c_str(), "/") == 0) {
+    if (path.find_last_of("/") != std::string::npos && path.find_last_of(".") == std::string::npos) {
         snprintf(buffer, sizeof(buffer), "Root directory: %s", argv[0]);
         logs(__FUNCTION__, buffer);
-    } else {
+
+        search_type[0] = 'd';
+    } else if (path.find_last_of(".") != std::string::npos) {
         snprintf(buffer, sizeof(buffer), "File: %s", path.c_str());
         logs(__FUNCTION__, buffer);
+
+        search_type[0] = 'f';
     }
+
+    search(path, search_type[0]);
 
     return 0;
 }

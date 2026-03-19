@@ -19,7 +19,7 @@
 
 #include <string>
 
-// Colors for logging
+// Colorme
 struct Colors {
     public:
     inline static const char *red = "\033[31m";
@@ -32,21 +32,42 @@ struct Colors {
     inline static const char *RESET = "\033[0m";
 };
 
+const char *color_me(const char *color);
+
 // Main utilities for search functionality
 struct Utilities {
     static bool should_log;
     static bool explore_all;
-    static bool file_search;
     static bool ignore_gitignore;
+    static bool ignore_hidden;
 
     static std::string path;
 
 };
 
+// Default configuration file path
+const std::string CONFIG_FILE_PATH = []() {
+    const char* user_env = std::getenv("USER");
+    std::string user_str;
+
+    if (user_env != nullptr) {
+        user_str = user_env;
+    } else {
+        user_str = "$USER";
+    }
+
+    return "/home/" + user_str + "/.config/search/config.lua";
+}();
+
+// Define the maximum buffer size
 #define MAX_BUFFER_SIZE 1024
 
 // Logging function
 void logs(const char *function, const char *message);
 void elogs(const char *message);
+
+// Search functions
+int checkConfig();
+void search(const std::string& query, char type);
 
 #endif
