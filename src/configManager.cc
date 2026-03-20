@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "include/utilities.hh"
+#include <cstdio>
+#include <cstring>
 #include <filesystem>
 #include <fstream>
 
@@ -26,7 +28,16 @@ void readConfigFile(const std::string& configPath) {
     if (file.is_open()) {
         std::string line;
         while (std::getline(file, line)) {
-            printf("%s\n", line.c_str());
+            if (line.find("--") == 0) {
+                continue;
+            } else {
+                char buffer[MAX_BUFFER_SIZE];
+                snprintf(buffer, sizeof(buffer), "%s", line.c_str());
+
+                if (strcmp(buffer, "use_config") != 0) {
+                    printf("%s\n", buffer);
+                }
+            }
         }
         file.close();
     }
@@ -42,7 +53,7 @@ int checkConfig() {
     try {
         if (fs::exists(configPath)) {
             logs(__FUNCTION__, "found");
-            readConfigFile(configPath);
+            // readConfigFile(configPath);
 
             return 0;
         } else {

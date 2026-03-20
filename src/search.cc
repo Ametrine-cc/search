@@ -16,11 +16,46 @@
 
 #include "include/utilities.hh"
 #include <cstdlib>
+#include <cstring>
+#include <filesystem>
 
-void search(const std::string& query, char type) {
+namespace fs = std::filesystem;
+
+void search(const std::string& query, char type, std::string path) {
+    char buffer[MAX_BUFFER_SIZE];
+    snprintf(buffer, MAX_BUFFER_SIZE, "%s", path.c_str());
+
     if (checkConfig() != 0) {
         exit(0);
     } else {
         logs("search", "searching");
+        snprintf(buffer, MAX_BUFFER_SIZE, "query: %s type: %c", query.c_str(), type);
+
+        try {
+            if (fs::exists(path) && fs::is_directory(path)) {
+                logs("search", buffer);
+
+                for (const auto& entry : fs::directory_iterator(path)) {
+                    char buffer[MAX_BUFFER_SIZE];
+
+                    if (entry.is_directory()) {
+                        snprintf(buffer, MAX_BUFFER_SIZE, "%s/", entry.path().relative_path().c_str());
+
+                        if (strstr(buffer, query.c_str()) != nullptr) {
+                            printf("search | %s\n", buffer);
+                        }
+
+                        search(query, type, entry.path().c_str());
+                    } else if (entry.is_regular_file()) {
+                        snprintf(buffer, MAX_BUFFER_SIZE, "%s", entry.path().relative_path().c_str());
+                        if (strstr(buffer, query.c_str()) != nullptr) {
+                            printf("search | %s\n", buffer);
+                        }
+                    }
+                }
+            }
+        } catch (const std::exception& e) {
+            logs("search", e.what());
+        }
     }
 }

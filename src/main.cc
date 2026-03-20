@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
         search_type[0] = 'f';
     }
 
-    search(path, search_type[0]);
+    search(path, search_type[0], "./");
 
     return 0;
 }

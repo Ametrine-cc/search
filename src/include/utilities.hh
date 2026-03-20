@@ -56,7 +56,7 @@ const std::string CONFIG_FILE_PATH = []() {
         user_str = "$USER";
     }
 
-    return "/home/" + user_str + "/.config/search/config.lua";
+    return "/home/" + user_str + "/.config/search/config.conf";
 }();
 
 // Define the maximum buffer size
@@ -68,6 +68,6 @@ void elogs(const char *message);
 
 // Search functions
 int checkConfig();
-void search(const std::string& query, char type);
+void search(const std::string& query, char type, std::string path);
 
 #endif
