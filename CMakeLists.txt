@@ -11,20 +11,27 @@ set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 # --- Executable Definition ---
 add_executable(search
     src/main.cc
-    src/logs.cc
     src/search.cc
     src/colorMe.cc
     src/configManager.cc
     src/include/utilities.hh
 )
 
-# --- Installation ---
+# --- Dependencies ---
+find_library(KAMAKAZI_PATH NAMES KamakaziLib)
 
-# Install the binary to the standard 'bin' directory
+# --- Check if it was actually found ---
+if(NOT KAMAKAZI_PATH)
+  message(FATAL_ERROR "KamakaziLib not found! Did you run 'sudo cmake --install'?")
+endif()
+
+target_link_libraries(search PRIVATE ${KAMAKAZI_PATH})
+
+# --- Install the binary to the standard 'bin' directory ---
 install(TARGETS search DESTINATION bin)
 
-# Locate the user's home directory safely
+# --- Locate the user's home directory safely ---
 set(USER_CONFIG_DIR "$ENV{HOME}/.config/search")
 
-# Install the config file
-install(FILES src/config.lua DESTINATION ${USER_CONFIG_DIR})
+# --- Install the config file ---
+install(FILES src/config.conf DESTINATION ${USER_CONFIG_DIR})

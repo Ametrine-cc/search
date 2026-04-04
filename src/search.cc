@@ -18,44 +18,63 @@
 #include <cstdlib>
 #include <cstring>
 #include <filesystem>
+#include <kamakazi>
 
 namespace fs = std::filesystem;
 
-void search(const std::string& query, char type, std::string path) {
+
+void Startsearch(const std::string& query, char type, std::string path) {
     char buffer[MAX_BUFFER_SIZE];
     snprintf(buffer, MAX_BUFFER_SIZE, "%s", path.c_str());
 
-    if (checkConfig() != 0) {
-        exit(0);
-    } else {
-        logs("search", "searching");
-        snprintf(buffer, MAX_BUFFER_SIZE, "query: %s type: %c", query.c_str(), type);
+    kazi_log("search", "searching");
+    snprintf(buffer, MAX_BUFFER_SIZE, "query: %s type: %c", query.c_str(), type);
 
-        try {
-            if (fs::exists(path) && fs::is_directory(path)) {
-                logs("search", buffer);
+    try {
+        if (fs::exists(path) && fs::is_directory(path)) {
+            kazi_log("search", buffer);
 
-                for (const auto& entry : fs::directory_iterator(path)) {
-                    char buffer[MAX_BUFFER_SIZE];
+            for (const auto& entry : fs::directory_iterator(path)) {
+                char buffer[MAX_BUFFER_SIZE];
 
-                    if (entry.is_directory()) {
-                        snprintf(buffer, MAX_BUFFER_SIZE, "%s/", entry.path().relative_path().c_str());
+                if (entry.is_directory()) {
 
-                        if (strstr(buffer, query.c_str()) != nullptr) {
-                            printf("search | %s\n", buffer);
-                        }
+                    if (!Utilities::ignore_gitignore && entry.path().filename().string().find_first_of('.') == 0 && entry.path().filename().string() == ".git") {
+                        continue;
+                    }
 
+                    snprintf(buffer, MAX_BUFFER_SIZE, "%s/", entry.path().relative_path().c_str());
+
+                    if (strstr(buffer, query.c_str()) != nullptr) {
+                        printf("search | %s\n", buffer);
+                    }
+
+                    if (Utilities::explore_all) {
                         search(query, type, entry.path().c_str());
-                    } else if (entry.is_regular_file()) {
-                        snprintf(buffer, MAX_BUFFER_SIZE, "%s", entry.path().relative_path().c_str());
-                        if (strstr(buffer, query.c_str()) != nullptr) {
-                            printf("search | %s\n", buffer);
-                        }
+                    }
+                } else if (entry.is_regular_file()) {
+                    snprintf(buffer, MAX_BUFFER_SIZE, "%s", entry.path().relative_path().c_str());
+                    if (strstr(buffer, query.c_str()) != nullptr) {
+                        printf("search | %s\n", buffer);
                     }
                 }
             }
-        } catch (const std::exception& e) {
-            logs("search", e.what());
         }
+    } catch (const std::exception& e) {
+        snprintf(buffer, MAX_BUFFER_SIZE, "search | %s", e.what());
+        kamakazi(buffer, 1);
+    }
+}
+
+void search(const std::string& query, char type, std::string path) {
+
+    if (Utilities::use_config) {
+        if (checkConfig() != 0) {
+            exit(0);
+        } else {
+            Startsearch(query, type, path);
+        }
+    } else {
+        Startsearch(query, type, path);
     }
 }

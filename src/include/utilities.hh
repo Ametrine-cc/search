@@ -36,10 +36,10 @@ const char *color_me(const char *color);
 
 // Main utilities for search functionality
 struct Utilities {
-    static bool should_log;
+    // Configuration flags
+    static bool use_config;
     static bool explore_all;
     static bool ignore_gitignore;
-    static bool ignore_hidden;
 
     static std::string path;
 
@@ -61,10 +61,6 @@ const std::string CONFIG_FILE_PATH = []() {
 
 // Define the maximum buffer size
 #define MAX_BUFFER_SIZE 1024
-
-// Logging function
-void logs(const char *function, const char *message);
-void elogs(const char *message);
 
 // Search functions
 int checkConfig();
